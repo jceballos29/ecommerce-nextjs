@@ -1,5 +1,7 @@
 // import { useRouter } from 'next/router'
 import React from 'react'
+import {database} from '../../config/firebase'
+import { collection, getDocs } from 'firebase/firestore'
 
 // export async function getServerSideProps(context){
 //   console.log(context)
@@ -12,8 +14,17 @@ import React from 'react'
 // }
 
 export async function getStaticPaths() {
-  const res = await fetch('http://localhost:3000/api/products')
-  const products = await res.json()
+  // console.log('getStaticPaths',context)
+  // const res = await fetch('http://localhost:3000/api/products')
+  // const products = await res.json()
+
+  const col = collection(database, 'products')
+  const docs = await getDocs(col)
+  const products = []
+  docs.forEach(doc => {
+    products.push({...doc.data(), id: doc.id})
+  })
+
   const paths = products.map(product => ({
     params: {
       id: product.id,
@@ -31,7 +42,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
 
-  console.log('getStaticProps',params)
+  // console.log('getStaticProps',params)
   return {
     props: {
       product: {
@@ -45,7 +56,7 @@ export async function getStaticProps({ params }) {
 
 
 const Product = ({product}) => {
-  console.log('Product',product)
+  // console.log('Product',product)
   // const router = useRouter()
   // const { name, description, price } = router.query
   

@@ -1,6 +1,8 @@
 /** @format */
 
 import Link from 'next/link';
+import {database} from '../../config/firebase'
+import { collection, getDocs } from 'firebase/firestore'
 
 // export async function getServerSideProps() {
 //   const res = await fetch('http://localhost:3000/api/products');
@@ -14,9 +16,20 @@ import Link from 'next/link';
 
 /// Static Side Generation
 
-export async function getStaticProps() {
-  const res = await fetch('http://localhost:3000/api/products');
-  const products = await res.json();
+export async function getStaticProps(context) {
+  
+  // console.log('Index getStaticProps: ', context);
+  // const res = await fetch('http://localhost:3000/api/products');
+  // const products = await res.json();
+
+  const col = collection(database, 'products')
+  const docs = await getDocs(col)
+  const products = []
+  docs.forEach(doc => {
+    products.push({...doc.data(), id: doc.id})
+  })
+
+
   return {
     props: {
       products,
@@ -25,8 +38,7 @@ export async function getStaticProps() {
 }
 
 const Products = ({ products }) => {
-  console.log(products);
-
+  
   return (
     <div>
       <Link href='/'>Home</Link>
