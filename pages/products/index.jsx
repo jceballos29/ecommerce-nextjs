@@ -1,5 +1,6 @@
-import React from 'react'
+/** @format */
 
+import Link from 'next/link';
 
 // export async function getServerSideProps() {
 //   const res = await fetch('http://localhost:3000/api/products');
@@ -18,30 +19,34 @@ export async function getStaticProps() {
   const products = await res.json();
   return {
     props: {
-      products
+      products,
     },
   };
 }
 
-const products = ({products}) => {
-
-  console.log(products)
+const Products = ({ products }) => {
+  console.log(products);
 
   return (
     <div>
-    <h1>Productos</h1>
+      <Link href='/'>Home</Link>
+      <h1>Productos</h1>
 
-    {
-      products.map(product => (
+      {products.map((product) => (
         <article key={product.id}>
-          <h2>{product.name}</h2>
+          <h2>
+            <Link
+              href='/products/[id]'
+              as={`/products/${product.id}`}>
+              {product.name}
+            </Link>
+          </h2>
           <p>{product.description}</p>
           <p>${product.price}</p>
         </article>
-      ))
-    }
-  </div>
-  )
-}
+      ))}
+    </div>
+  );
+};
 
-export default products
+export default Products;
